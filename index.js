@@ -104,11 +104,26 @@ function handleF14(req, res) { res.status(200).send('in ' + handleF14.name + '.'
 // #endregion handlers
 
 // #region main-line function
+
+async function generatePagesFor(urls, listenPort) {
+	var base, proto = 'http', host;
+
+	console.log(generatePagesFor.name + ' starts');
+	host = process.env['COMPUTERNAME'].toLowerCase();
+	if (!listenPort) throw new Error('listen-port is null!');
+	if (urls && typeof (urls) === 'object' && Array.isArray(urls)) {
+		base = `${proto}://${host}:${PORT}`;
+	}
+	console.log(generatePagesFor.name + ' ends');
+}
+
 /*
 * main - line function
 */
-function main(listenPort) {
-	var app, express, bodyParser, cors;
+async function main(listenPort, runServer) {
+	var app, express, bodyParser, cors, urls;
+
+	console.log('in ' + main.name);
 
 	bodyParser = require('body-parser');	// adds x-www-form-urlencoded data into the Request
 	cors = require('cors');
@@ -126,34 +141,35 @@ function main(listenPort) {
 	app.use(cors());
 	app.use(bodyParser.urlencoded({ extended: false }));
 
-	addRoutes(
-		app,
-		listenPort,
-		[
-			{ url: '/f1', action: 'GET', handler: handleF1 },
-			{ url: '/f2/put/:company', action: 'PUT', handler: handleF2 },
-			{ url: '/f3/patch/:company', action: 'PATCH', handler: handleF3 },
-			{ url: '/f4/delete/:company', action: 'DELETE', handler: handleF4 },
-			{ url: '/f5/copy/:company', action: 'COPY', handler: handleF5 },
-			{ url: '/f6', action: 'HEAD', handler: handleF6 },
-			{ url: '/f7', action: 'OPTIONS', handler: handleF7 },
-			{ url: '/f8', action: 'LINK', handler: handleF8 },
-			{ url: '/f9', action: 'UNLINK', handler: handleF9 },
-			{ url: '/f10', action: 'PURGE', handler: handleF10 },
-			{ url: '/f11', action: 'LOCK', handler: handleF11 },
-			{ url: '/f12', action: 'UNLOCK', handler: handleF12 },
-			{ url: '/f13', action: 'PROPFIND', handler: handleF13 },
-			{ url: '/f14', action: 'VIEW', handler: handleF14 },
-		]);
-	app.listen(listenPort, () => {
-		console.log(`Example app listening on port ${listenPort}`);
-	});
-	console.log('in main');
+	urls = [
+		{ url: '/f1', action: 'GET', handler: handleF1 },
+		{ url: '/f2/put/:company', action: 'PUT', handler: handleF2 },
+		{ url: '/f3/patch/:company', action: 'PATCH', handler: handleF3 },
+		{ url: '/f4/delete/:company', action: 'DELETE', handler: handleF4 },
+		{ url: '/f5/copy/:company', action: 'COPY', handler: handleF5 },
+		{ url: '/f6', action: 'HEAD', handler: handleF6 },
+		{ url: '/f7', action: 'OPTIONS', handler: handleF7 },
+		{ url: '/f8', action: 'LINK', handler: handleF8 },
+		{ url: '/f9', action: 'UNLINK', handler: handleF9 },
+		{ url: '/f10', action: 'PURGE', handler: handleF10 },
+		{ url: '/f11', action: 'LOCK', handler: handleF11 },
+		{ url: '/f12', action: 'UNLOCK', handler: handleF12 },
+		{ url: '/f13', action: 'PROPFIND', handler: handleF13 },
+		{ url: '/f14', action: 'VIEW', handler: handleF14 },
+	];
+	if (!runServer) {
+		await generatePagesFor(urls, listenPort);
+	} else {
+		addRoutes(app, listenPort, urls);
+		app.listen(listenPort, () => {
+			console.log(`Example app listening on port ${listenPort}`);
+		});
+	}
 }
 // #endregion main-line function
 
 try {
-	main(PORT);
+	main(PORT, false);
 } catch (anException) {
 	console.error(anException.message);
 }
