@@ -1,0 +1,30 @@
+{
+	"name": "wip",
+	"version": "1.0.0",
+	"main": "index.js",
+	"description": "description of wip",
+	"author": "rik <rcousens@colt.com> (http://www.colt.com/)",
+	"license": "MIT",
+	"keywords": [
+		"Colt",
+		"NODEJS"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git@ssh.dev.azure.com:v3/rcousens0730/wip/wip"
+	},
+	"dependencies": {
+		"cors": "^2.8.5",
+		"express": "^4.18.2",
+		"fs": "@latest",
+		"path": "@latest"
+	},
+	"devDependencies": {
+		"eslint": "^8.37.0"
+	},
+	"scripts": {
+		"start": "node server.js",
+		"clean": "rd /q/s node_modules",
+		"upgrade": "npx yarn-upgrade-all"
+	}
+}
